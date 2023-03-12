@@ -8,21 +8,28 @@ export default function App() {
   const formModel = [
     {
       type: "checkbox",
-      name: "checked" as "checked",
+      name: "checked" ,
       defaultValue: false
-    }, {
+    },
+    {
       type: "text",
-      name: "data" as "data",
+      name: "data",
       defaultValue: 'true'
-    }
-  ] as const;
-  const [data, setData] = useState([{ data: "test", checked: true },{ data: "test2", checked: "false" }]);
+    },
+    {
+      type: "text" ,
+      name: "data2" ,
+      defaultValue: 'true',
+    },
+  ]as const;
+  const [data, setData] = useState([{ data: "test", checked: true ,data2:"str"},{ data: "test2", checked: false,data2:"str" }]);
+  // const [data, setData] = useState<DataModel<typeof formModel,2>[]>([{ data: "test", checked: true },{ data: "test2", checked: false }]);
   // NOTE FormModel からdataの型を推論するバージョンがほしい
   return (
     <div >
       <div>list:</div>
       <DynamicList data={data} setData={setData} formModel={formModel} />
-      <DynamicList2 data={data} setData={setData} formModel={formModel} />
+      <DynamicList2 data={data} setData={setData} formModel={formModel} unit={3} />
     </div>
   );
 }

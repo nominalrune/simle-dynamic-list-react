@@ -11,7 +11,7 @@ type FormDataObj<K extends string,U extends 'checkbox'|'select'|'textarea'|Input
 type WithId<T extends object> = T & { id: number | string; };
 export type InputType = "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "tel" | "text" | "time" | "url" | "week";
 
-type FormModel<T extends string> = (InputAttr<InputType, T> | SelectAttr<T> | CheckboxAttr<T> | TextareaAttr<T>)[];
+export type FormModel<T extends string> = (InputAttr<InputType, T> | SelectAttr<T> | CheckboxAttr<T> | TextareaAttr<T>)[];
 
 interface InputAttr<T, U> {
 	type: T,
@@ -22,7 +22,7 @@ interface InputAttr<T, U> {
 	attributes?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLInputElement>, HTMLInputElement>,
 }
 
-type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
+export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 interface DynamicListProps<T> {
 	formModel: FormModel<keyof T & string>|Readonly<FormModel<keyof T & string>>,
 	data: T[]|Readonly<T[]>,
