@@ -10,7 +10,10 @@ export interface InputAttr<T> {
 export type Primitive = string | number | boolean;
 
 export type F = InputAttr<InputType> | SelectAttr | CheckboxAttr | TextareaAttr;
+
 export type Readable<T> = T | Readonly<T>;
+
+
 export type FormModel<N> = N extends 1 ? Readable<[F]> : N extends 2 ? Readable<[F, F]> : N extends 3 ? Readable<[F, F, F]> : N extends 4 ? Readable<[F, F, F, F]> : N extends 5 ? Readable<[F, F, F, F, F]> : N extends 6 ? Readable<[F, F, F, F, F, F]> : N extends 7 ? Readable<[F, F, F, F, F, F, F]> : N extends 8 ? Readable<[F, F, F, F, F, F, F, F]> : N extends 9 ? Readable<[F, F, F, F, F, F, F, F, F]> : Readable<[F, F, F, F, F, F, F, F, F, F]>;
 
 export type TextareaAttr = InputAttr<'textarea'>;
@@ -26,7 +29,7 @@ export interface CheckboxParam<T extends WithId<DataObj<{name:U, type:'checkbox'
 	handleChange: (id: string | number, name: U, value: boolean) => void;
 }
 
-export type SelectAttr = InputAttr<'select'> & { options: [label: string, value: string][]; };
+export type SelectAttr = InputAttr<'select'> & { options: Readable<[label: string, value: string]>[]; };
 export interface SelectParam<T extends WithId<DataObj<{name:U, type:'select'}>>, U extends keyof T & string> {
 	field: SelectAttr,
 	item: T,

@@ -29,7 +29,8 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 		//console.log("addItem",{initialValue})
 		setList((list) => [...list, withId(initialValue)]);
 	}
-	function handleAdd() {
+	function handleAdd(e) {
+		e.preventDefault();
 		const newItem: DataModel<T,N> = formModel.reduce((acc, field) => ({ ...acc, [field.name]: field.defaultValue }),{}) as unknown as DataModel<T,N>;
 		addItem(newItem);
 	}
@@ -42,9 +43,9 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 		setList(newList);
 	}
 	return (
-		<div className='flex flex-col'>
+		<div className='flex flex-col my-3'>
 			{list.map((item) => (
-				<div key={item.id} className='flex flex-row'>
+				<div key={item.id} className='flex flex-row items-center my-2'>
 					{formModel.map((field:F) => (
 						<div key={field.name} >
 							{
@@ -65,10 +66,14 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 							}
 						</div>
 					))}
-					<button onClick={() => handleDelete(item.id)}>x</button>
+					<button 
+			className='h-6 w-6 bg-slate-200 rounded-md hover:bg-slate-300 active:bg-slate-400'
+					onClick={() => handleDelete(item.id)}>x</button>
 				</div>
 			))}
-			<button onClick={handleAdd}>add</button>
+			<button 
+			className='m-2 h-8 w-3/4 bg-slate-200 rounded-md hover:bg-slate-300 active:bg-slate-400'
+			onClick={handleAdd}>add</button>
 		</div>
 	);
 }
@@ -77,14 +82,15 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 
 function Input<T extends WithId<DataObj<{name:U, type:InputType}>>, U extends keyof T & string>({ field, item, handleChange }: InputParam<T, U>) {
 	return (
-		<>
-			{field.label && <label htmlFor={field.name}>{field.label}</label>}
+		<div className="relative">
+			{field.label && <label htmlFor={field.name} className='text-sm text-slate-800 absolute -top-4'>{field.label}</label>}
 			<input
+			className='border-2 border-slate-300 rounded-md p-1 m-1'
 				{...field}
 				value={item[field.name]}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(item.id, field.name, e.target.value)}
 			/>
-		</>
+		</div>
 	);
 }
 
@@ -93,6 +99,7 @@ function Select<T extends WithId<DataObj<{name:U, type:'select'}>>, U extends ke
 		<>
 			{field.label && <label htmlFor={field.name}>{field.label}</label>}
 			<select
+			className='border-2 border-slate-300 rounded-md p-1'
 				{...field}
 				value={item[field.name].toString()}
 				onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleChange(item.id, field.name, e.target.value)}
@@ -110,6 +117,7 @@ function Checkbox<T extends WithId<DataObj<{name:U, type:'checkbox'}>>, U extend
 		<>
 			<input
 				{...field}
+			className='h-6 w-6 m-2'
 				defaultValue={field.name}
 				value={field.name}
 				checked={item[field.name]}
@@ -125,6 +133,7 @@ function Textarea<T extends WithId<DataObj<{name:U, type:'textarea'}>>, U extend
 		<>
 			{field.label && <label htmlFor={field.name}>{field.label}</label>}
 			<textarea
+			className='border-2 border-slate-300 rounded-md p-1'
 				{...field}
 				value={item[field.name]}
 				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange(item.id, field.name, e.target.value)}

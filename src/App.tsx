@@ -1,46 +1,75 @@
 import * as React from 'react';
 import './style.css';
 import { NestedForm } from './Inputs/NestedForm';
-
+import type { F } from './Inputs/commonTypes';
 const { useState } = React;
 
 export default function App() {
   const prop = [
-    { name: 'hi', defaultValue: 'hey', type: 'text' },
-    { name: 'age', defaultValue: '4', type: 'number' },
+    { name: 'name', defaultValue: 'John', type: 'text', label: 'Name' },
     {
-      name: 'nested',
+      name: 'email',
+      defaultValue: 'john@example.com',
+      type: 'email',
+      label: 'Email',
+    },
+    {
+      name: 'profile',
       type: 'nested',
-      unit:4,
+      label: 'Profile',
+      unit: 3,
+      model: [
+        { name: 'age', label: 'Age', defaultValue: '24', type: 'number' },
+        {
+          name: 'gender',
+          label: 'Gender',
+          type: 'select',
+          defaultValue: 'male',
+          options: [
+            ['male', 'male'],
+            ['female', 'female'],
+            ['other', 'other'],
+          ],
+        },
+        {
+          name: 'greeting',
+          defaultValue: 'hey',
+          type: 'text',
+          label: 'Greeting',
+        },
+      ],
+    },
+
+    {
+      name: 'friends',
+      type: 'nested-iterable',
+      label: 'Friends',
+      unit: 3,
       model: [
         {
           type: 'checkbox',
           name: 'checked',
+
           defaultValue: false,
         },
         {
           type: 'text',
           name: 'name',
-          defaultValue: 'John',
-        },
-        {
-          type: 'text',
-          name: 'addr',
-          defaultValue: 'America',
+          label: 'Name',
+          defaultValue: '',
         },
         {
           type: 'text',
           name: 'email',
-          defaultValue: 'ama@aaa.com',
+          label: 'Email',
+          defaultValue: '',
         },
       ],
     },
   ] as const;
   return (
-    <div>
-      <div>list:</div>
+    <div className="m-6">
       <NestedForm properties={prop} />
-      {/* <DynamicList2 data={data} setData={setData} formModel={formModel} unit={3} /> */}
     </div>
   );
 }
