@@ -1,35 +1,46 @@
 import * as React from 'react';
 import './style.css';
-import DynamicList from './DynamicList';
-import DynamicList2 from './DynamicList2';
+import { NestedForm } from './Inputs/NestedForm';
+
 const { useState } = React;
 
 export default function App() {
-  const formModel = [
+  const prop = [
+    { name: 'hi', defaultValue: 'hey', type: 'text' },
+    { name: 'age', defaultValue: '4', type: 'number' },
     {
-      type: "checkbox",
-      name: "checked" ,
-      defaultValue: false
+      name: 'nested',
+      type: 'nested',
+      unit:4,
+      model: [
+        {
+          type: 'checkbox',
+          name: 'checked',
+          defaultValue: false,
+        },
+        {
+          type: 'text',
+          name: 'name',
+          defaultValue: 'John',
+        },
+        {
+          type: 'text',
+          name: 'addr',
+          defaultValue: 'America',
+        },
+        {
+          type: 'text',
+          name: 'email',
+          defaultValue: 'ama@aaa.com',
+        },
+      ],
     },
-    {
-      type: "text",
-      name: "data",
-      defaultValue: 'true'
-    },
-    {
-      type: "text" ,
-      name: "data2" ,
-      defaultValue: 'true',
-    },
-  ]as const;
-  const [data, setData] = useState([{ data: "test", checked: true ,data2:"str"},{ data: "test2", checked: false,data2:"str" }]);
-  // const [data, setData] = useState<DataModel<typeof formModel,2>[]>([{ data: "test", checked: true },{ data: "test2", checked: false }]);
-  // NOTE FormModel からdataの型を推論するバージョンがほしい
+  ] as const;
   return (
-    <div >
+    <div>
       <div>list:</div>
-      <DynamicList data={data} setData={setData} formModel={formModel} />
-      <DynamicList2 data={data} setData={setData} formModel={formModel} unit={3} />
+      <NestedForm properties={prop} />
+      {/* <DynamicList2 data={data} setData={setData} formModel={formModel} unit={3} /> */}
     </div>
   );
 }

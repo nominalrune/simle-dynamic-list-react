@@ -1,65 +1,6 @@
 import * as React from 'react';
-const { useState, useEffect } = React;
-
-type Primitive = string | number | boolean;
-
-type F = InputAttr<InputType> | SelectAttr | CheckboxAttr | TextareaAttr;
-type Readable<T> = T | Readonly<T>;
-export type FormModel<N> = N extends 1 ? Readable<[F]> : N extends 2 ? Readable<[F, F]> : N extends 3 ? Readable<[F, F, F]> : N extends 4 ? Readable<[F, F, F, F]> : N extends 5 ? Readable<[F, F, F, F, F]> : N extends 6 ? Readable<[F, F, F, F, F, F]> : N extends 7 ? Readable<[F, F, F, F, F, F, F]> : N extends 8 ? Readable<[F, F, F, F, F, F, F, F]> : N extends 9 ? Readable<[F, F, F, F, F, F, F, F, F]> : Readable<[F, F, F, F, F, F, F, F, F, F]>;
-
-type DataObj<K extends { name: string, type: string; }> = {
-	[name in K['name']]: K['type'] extends 'checkbox' ? boolean : string;
-};
-
-export type DataModel<FM extends FormModel<N>, N extends number> = N extends 1
-	? DataObj<FM[0]>
-	: N extends 2
-	? DataObj<FM[0]> & DataObj<FM[1]>
-	: N extends 3
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]>
-	: N extends 4
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]>
-	: N extends 5
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]>
-	: N extends 6
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]> & DataObj<FM[5]>
-	: N extends 7
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]> & DataObj<FM[5]> & DataObj<FM[6]>
-	: N extends 8
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]> & DataObj<FM[5]> & DataObj<FM[6]> & DataObj<FM[7]>
-	: N extends 9
-	? DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]> & DataObj<FM[5]> & DataObj<FM[6]> & DataObj<FM[7]> & DataObj<FM[8]>
-	: DataObj<FM[0]> & DataObj<FM[1]> & DataObj<FM[2]> & DataObj<FM[3]> & DataObj<FM[4]> & DataObj<FM[5]> & DataObj<FM[6]> & DataObj<FM[7]> & DataObj<FM[8]> & DataObj<FM[9]>
-	;
-// const test1 = [{ type: 'text', name: 'test', defaultValue: "default value" as string }
-// ] as const;
-// const test2 = [{ type: 'text', name: 'test', defaultValue: "default value" as string },
-// { type: 'checkbox', name: 'test2', defaultValue: false }
-// ] as const;
-// const test3 = [{ type: 'text', name: 'test', defaultValue: "default value" as string },
-// { type: 'checkbox', name: 'test2', defaultValue: false },
-// { type: 'number', name: 'test3', defaultValue: "4", }
-// ] as const;
-// type Test1 = DataModel<typeof test1, 1>;
-// type Test2 = DataModel<typeof test2, 2>;
-// type Test3 = DataModel<typeof test3, 3>;
-// const test2val: Test3 = {
-// 	test: "true",
-// 	test2: true,
-// 	test3: 'too',
-// 	test4: 4,
-// };
-interface InputAttr<T> {
-	type: T,
-	name: string,
-	label?: React.ReactNode,
-	defaultValue: T extends 'checkbox' ? boolean : string,
-	required?: boolean,
-	attributes?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-}
-
-type WithId<T extends object> = T & { id: number | string; };
-export type InputType = "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "tel" | "text" | "time" | "url" | "week";
+import type { InputAttr,FormModel,DataModel,Primitive, WithId, DataObj,InputType,InputParam,F, Readable,SelectParam,  TextareaParam, CheckboxParam } from './commonTypes';
+const { useState, useEffect } = React; 
 
 export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -78,16 +19,18 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 		console.log('list has changed', list);
 		setData(list);
 	}, [list]);
+
 	function withId(initialValue: DataModel<T,N>):WithId<DataModel<T,N>>{
-		const id = (typeof initialValue?.id == 'string' || typeof initialValue?.id == 'number') ? initialValue.id : index; // NOTE initialValue.id be prioritized over index, overwriting the original id may cause errors
+		const id = ('id' in initialValue) ? initialValue.id as number|string: index; // NOTE initialValue.id be prioritized over index, overwriting the original id may cause errors
 		setIndex((index) => index + 1);
 		return { ...initialValue, id, };
 	}
 	function addItem(initialValue: DataModel<T,N>) {
+		//console.log("addItem",{initialValue})
 		setList((list) => [...list, withId(initialValue)]);
 	}
 	function handleAdd() {
-		const newItem: DataModel<T,N> = formModel.reduce((acc, field) => ({ ...acc, [field.name]: field.defaultValue })) as unknown as DataModel<T,N>;
+		const newItem: DataModel<T,N> = formModel.reduce((acc, field) => ({ ...acc, [field.name]: field.defaultValue }),{}) as unknown as DataModel<T,N>;
 		addItem(newItem);
 	}
 	function handleChange(id: string | number, name: keyof WithId<DataModel<T,N>> & string, value: Primitive) {
@@ -131,11 +74,7 @@ export default function DynamicList2<T extends FormModel<N>, N extends number>({
 }
 
 
-interface InputParam<T extends WithId<DataObj<{name:U, type:InputType}>>, U extends keyof T & string> {
-	field: InputAttr<InputType>,
-	item: T,
-	handleChange: (id: string | number, name: U, value: string) => void;
-}
+
 function Input<T extends WithId<DataObj<{name:U, type:InputType}>>, U extends keyof T & string>({ field, item, handleChange }: InputParam<T, U>) {
 	return (
 		<>
@@ -148,12 +87,7 @@ function Input<T extends WithId<DataObj<{name:U, type:InputType}>>, U extends ke
 		</>
 	);
 }
-type SelectAttr = InputAttr<'select'> & { options: [label: string, value: string][]; };
-interface SelectParam<T extends WithId<DataObj<{name:U, type:'select'}>>, U extends keyof T & string> {
-	field: SelectAttr,
-	item: T,
-	handleChange: (id: string | number, name: U, value: string) => void;
-}
+
 function Select<T extends WithId<DataObj<{name:U, type:'select'}>>, U extends keyof T & string>({ field, item, handleChange }: SelectParam<T, U>) {
 	return (
 		<>
@@ -170,12 +104,7 @@ function Select<T extends WithId<DataObj<{name:U, type:'select'}>>, U extends ke
 		</>
 	);
 }
-type CheckboxAttr = InputAttr<'checkbox'>;
-interface CheckboxParam<T extends WithId<DataObj<{name:U, type:'checkbox'}>>, U extends keyof T & string> {
-	field: CheckboxAttr,
-	item: T,
-	handleChange: (id: string | number, name: U, value: boolean) => void;
-}
+
 function Checkbox<T extends WithId<DataObj<{name:U, type:'checkbox'}>>, U extends keyof T & string>({ field, item, handleChange }: CheckboxParam<T, U>) {
 	return (
 		<>
@@ -190,12 +119,7 @@ function Checkbox<T extends WithId<DataObj<{name:U, type:'checkbox'}>>, U extend
 		</>
 	);
 }
-type TextareaAttr = InputAttr<'textarea'>;
-interface TextareaParam<T extends WithId<DataObj<{name:U, type:'textarea'}>>, U extends keyof T & string> {
-	field: TextareaAttr,
-	item: T,
-	handleChange: (id: string | number, name: keyof T & string, value: string) => void;
-}
+
 function Textarea<T extends WithId<DataObj<{name:U, type:'textarea'}>>, U extends keyof T & string>({ field, item, handleChange }: TextareaParam<T, U>) {
 	return (
 		<>
